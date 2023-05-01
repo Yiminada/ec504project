@@ -26,15 +26,17 @@ class route:
         self.demand = orig.demand
 
     def Insert(self, client, goesTo):
-        """Expects both comesFrom and goesTo to be existing nodes already"""
+        """Expects goesTo to be existing node already"""
         for count, c in enumerate(self.edges):
             if c[1].equals(goesTo):
                 self.edges[count] = (c[0],client)
                 (self.edges).insert(count+1,(client,goesTo))
                 (self.clientList).insert(count,client)
-                break
+                self.demand += client.demand
+                return
+            
+        print("Could not insert, goesTo not found")
 
-        self.demand += client.demand
 
 def testRoute():
     client1 = client(0, 1, 1, 20, 504, 207, 90)
