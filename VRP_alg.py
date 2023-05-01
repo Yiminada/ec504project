@@ -1,5 +1,6 @@
 import setupVRP as vrp
 import csv
+import numpy
 
 def setupData(filename):
     # opening the CSV file
@@ -16,9 +17,14 @@ def setupData(filename):
             if(lines[7].isdigit()):
                 vehicle_list.append(vrp.vehicle(lines[7], lines[8]))
     return vehicle_list, client_list
+
+def profit(i, j):
+    return ((i.xcoords-j.xcoords)**2 + (i.ycoords-j.ycoords)**2)**0.5 #sqrt((x2-x1)^2 + (y2-y1)^2)
+def feasibility():
+
 def main():
     vehicle_list, client_list = setupData("VRP_Data.csv")
-    
+    print(profit(client_list[0], client_list[1]))
     
 if __name__ == '__main__':
     main()
