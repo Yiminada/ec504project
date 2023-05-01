@@ -1,5 +1,6 @@
 import setupVRP as vrp
 import csv
+import numpy
 
 
 def setupData(filename):
@@ -18,7 +19,6 @@ def setupData(filename):
             if (lines[7].isdigit()):
                 vehicle_list.append(vrp.vehicle(lines[7], lines[8]))
     return vehicle_list, client_list
-
 
 def insertionHeuristic(N):
     # set of routes: each element in a route describes edge from [i-1,i]
