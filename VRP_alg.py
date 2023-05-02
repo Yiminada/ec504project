@@ -1,7 +1,9 @@
 import setupVRP as vrp
 import csv
 import math
+import plotly.graph_objects as go
 from setupVRP import client, vehicle, route
+from visualize import showMap
 
 
 def setupData(filename):
@@ -85,15 +87,20 @@ def Update(r):
 
 
 def main():
-    vehicle_list, client_list = setupData("VRP_Data_1.csv")
+    vehicle_list, client_list = setupData("VRP_Data.csv")
     print("Vehicles: ", end='')
     for v in vehicle_list:
         print(v.id, end=', ')
     print("\nClients: ", end='')
     for client in client_list:
         print(f"({client.xcoords}, {client.ycoords})", end=', ')
-    insertionHeuristic(client_list, vehicle_list)
+    R = insertionHeuristic(client_list, vehicle_list)
+    fig = go.Figure()
+    for r in R:
+        fig = showMap(r.edges,fig=fig)
+    fig.show()
 
 
 if __name__ == '__main__':
     main()
+
