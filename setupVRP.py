@@ -32,12 +32,12 @@ class route:
         """Expects goesTo to be existing node already"""
         for count, c in enumerate(self.edges):
             if c[1].equals(goesTo):
-                self.edges[count] = (c[0], client)
-                (self.edges).insert(count+1, (client, goesTo))
-                (self.clientList).insert(count, client)
+                self.edges[count] = (c[0],client)
+                (self.edges).insert(count+1,(client,goesTo))
+                (self.clientList).insert(count,client)
                 self.demand += client.demand
                 return
-
+                
         print("Could not insert, goesTo not found")
 
 
