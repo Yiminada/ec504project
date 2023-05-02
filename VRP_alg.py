@@ -1,6 +1,7 @@
 import setupVRP as vrp
 import csv
-import numpy
+import math
+from setupVRP import client, vehicle, route
 
 
 def setupData(filename):
@@ -20,31 +21,47 @@ def setupData(filename):
                 vehicle_list.append(vrp.vehicle(lines[7], lines[8]))
     return vehicle_list, client_list
 
-def insertionHeuristic(N):
-    # set of routes: each element in a route describes edge from [i-1,i]
-    R = [[[0, 0]]]
+
+def insertionHeuristic(N, V):
+    """
+    N is list of nodes, i.e. clients
+    R is list of routes (one vehicle/route): each element in a route describes edge from [i-1,i]
+    V is list of vehicles, w/ 1:1 correspondence b/w R and V
+    """
+    # initialize routes
+    R = []
+    origin = N[0]
+    for v in V:
+        R.append(route(origin, v))
+    N.remove(origin)
     while N:
+        print("in while loop")
         profit_temp = -float('inf')
         invalidRoute = True
         for j in N:
             for r in R:
-                for i_prev, i in r:
-                    if isFeasible(i_prev, i) and getProfit(i_prev, i) > profit_temp:
+                for i_prev, i in r.edges:
+                    if feasibility(r.vehicle, r, j) and profit(i_prev, i, j) > profit_temp:
+                        print("in if statement")
                         invalidRoute = False
                         r_candidate = r
-                        i_prev_candidate = i_prev
                         j_candidate = j
-                        profit_temp = getProfit(i_prev, i)
+                        i_candidate = i
+                        profit_temp = profit(i_prev, i, j)
         if invalidRoute:
             break
-        del N[j_candidate]
-        Insert(i_prev_candidate, j_candidate)
-        Update(r_candidate)
+        print(j_candidate.id)
+        N.remove(j_candidate)
+        r_candidate.Insert(j_candidate, i_candidate)
+        # Update(r_candidate)
+    for r in R:
+        # print(f"\nOrigin: ({r.orig.xcoords}, {r.orig.ycoords})")
+        print(f"\nOrigin: {r.orig.id}")
+        print(f"Capacity: {r.demand} vs {r.vehicle.capacity}")
+        for client in r.clientList:
+            # print(f"({client.xcoords}, {client.ycoords})", end=',')
+            print(client.id, end=', ')
     return R
-
-
-def isFeasible(i, j):   # REPLACE THIS FUNCTION WITH FEASIBILITY
-    return True
 
 
 def feasibility(vehicle, route, client):
@@ -54,17 +71,13 @@ def feasibility(vehicle, route, client):
         return False
 
 
-def getProfit(i, j):  # REPLACE THIS FUNCTION WITH PROFIT
-    return 5
-
-
-def profit(i, j):
-    # sqrt((x2-x1)^2 + (y2-y1)^2)
-    return ((i.xcoords-j.xcoords)**2 + (i.ycoords-j.ycoords)**2)**0.5
-
-
-def Insert(i, j):
-    return None
+def profit(i_prev, i, j):
+    i_prev_to_j = math.sqrt((i_prev.xcoords-j.xcoords)
+                            ** 2 + (i_prev.ycoords-j.ycoords)**2)
+    j_to_i = math.sqrt((j.xcoords-i.xcoords)**2 + (j.ycoords-i.ycoords)**2)
+    i_prev_to_i = math.sqrt((i_prev.xcoords-i.xcoords)
+                            ** 2 + (i_prev.ycoords-i.ycoords)**2)
+    return -1 * (i_prev_to_j + j_to_i - i_prev_to_i)
 
 
 def Update(r):
@@ -72,9 +85,14 @@ def Update(r):
 
 
 def main():
-    vehicle_list, client_list = setupData("VRP_Data.csv")
-    insertionHeuristic({0: [0, 0]})
-    print(profit(client_list[0], client_list[1]))
+    vehicle_list, client_list = setupData("VRP_Data_1.csv")
+    print("Vehicles: ", end='')
+    for v in vehicle_list:
+        print(v.id, end=', ')
+    print("\nClients: ", end='')
+    for client in client_list:
+        print(f"({client.xcoords}, {client.ycoords})", end=', ')
+    insertionHeuristic(client_list, vehicle_list)
 
 
 if __name__ == '__main__':
