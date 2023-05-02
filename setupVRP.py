@@ -8,22 +8,25 @@ class client:
         self.due_date = float(due_date)
         self.service_time = float(service_time)
 
-    def equals(self,check):
+    def equals(self, check):
         if self.id == check.id:
             return True
+
 
 class vehicle:
     def __init__(self, id, capacity):
         self.id = float(id)
         self.capacity = float(capacity)
 
+
 class route:
-    def __init__(self, orig: client):
+    def __init__(self, orig: client, vehicle: vehicle):
         """Expects an origin node to be given of type client"""
         self.orig = orig
         self.clientList = [orig]
-        self.edges = [(orig,orig)]
+        self.edges = [(orig, orig)]
         self.demand = orig.demand
+        self.vehicle = vehicle
 
     def Insert(self, client, goesTo):
         """Expects goesTo to be existing node already"""
@@ -34,7 +37,7 @@ class route:
                 (self.clientList).insert(count,client)
                 self.demand += client.demand
                 return
-            
+                
         print("Could not insert, goesTo not found")
 
 
@@ -43,17 +46,18 @@ def testRoute():
     client2 = client(1, 2, 1, 3, 504, 207, 90)
     r = route(client1)
     print(r.demand)
-    r.Insert(client2,client1)
+    r.Insert(client2, client1)
     print(r.demand)
 
+
 def main():
-    #make client to test client
+    # make client to test client
     client1 = client(0, 1, 1, 20, 504, 207, 90)
     print("Client1:")
-    print(client1.id, client1.xcoords, client1.ycoords, client1.demand, 
+    print(client1.id, client1.xcoords, client1.ycoords, client1.demand,
           client1.start_time, client1.due_date, client1.service_time)
-    
-    #make vehicle to test vehicle class
+
+    # make vehicle to test vehicle class
     vehicle1 = vehicle(0, 100)
     print("\nvehicle: ")
     print(vehicle1.id, vehicle1.capacity)
