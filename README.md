@@ -7,3 +7,6 @@ Ensure you have a recent version (3.6 or higher) of Python installed. We have pr
 
 ### Running the Code
 We've configured the algorithms to run and print their outputs from a single entrypoint. In the project folder, simply run `python VRP_alg.py`.
+
+### Presentation link
+https://docs.google.com/presentation/d/1zqL0-hHf6ZOdBUKRWEU3CPR2AtTBuGb6sFXqF_0Zv9U/edit?usp=sharing
