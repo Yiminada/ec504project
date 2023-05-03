@@ -1,7 +1,23 @@
 import setupVRP as vrp
 import plotly.graph_objects as go
 
-def showMap(edges,fig=None,printFlag=False):
+def make_annotations(pos, text, font_size=10, font_color='rgb(250,250,250)'):
+    L=len(pos)
+    if len(text)!=L:
+        raise ValueError('The lists pos and text must have the same len')
+    annotations = []
+    for k in range(L):
+        annotations.append(
+            dict(
+                text=text[k], # or replace labels with a different list for the text within the circle
+                x=pos[k][0], y=pos[k][1],
+                xref='x1', yref='y1',
+                font=dict(color=font_color, size=font_size),
+                showarrow=False)
+        )
+    return annotations
+
+def showMap(edges,fig=None,printFlag=False,title=""):
     if edges is None and fig is not None:
         fig.show()
 
@@ -40,48 +56,38 @@ def showMap(edges,fig=None,printFlag=False):
                     hoverinfo='text',
                     opacity=0.8
                     ))
+    fig.add_trace(go.Scatter(x=[Xn[0]],
+                             y=[Yn[0]],
+                             mode='markers',
+                             name='orig',
+                             marker=dict(symbol='circle-dot',
+                                         size=18,
+                                         color='#33E833',
+                                         line=dict(color='rgb(50,50,50)',width=1)),
+                             text=[labels[0]],
+                             hoverinfo='text',
+                             opacity=0.8))
+    
+    axis = dict(showline=False, # hide axis line, grid, ticklabels and  title
+                zeroline=False,
+                showgrid=False,
+                showticklabels=False,
+                )
+    position = [(edge[0].xcoords,edge[0].ycoords) for edge in edges]
+    fig.update_layout(title=title,
+                annotations=make_annotations(position, labels),
+                font_size=12,
+                showlegend=False,
+                xaxis=axis,
+                yaxis=axis,
+                margin=dict(l=40, r=40, b=85, t=100),
+                hovermode='closest',
+                plot_bgcolor='rgb(248,248,248)'
+                )
+    
     if printFlag:
         fig.show()
     return fig
-
-
-
-
-
-# fig.show()
-
-# def make_annotations(pos, text, font_size=10, font_color='rgb(250,250,250)'):
-#     L=len(pos)
-#     if len(text)!=L:
-#         raise ValueError('The lists pos and text must have the same len')
-#     annotations = []
-#     for k in range(L):
-#         annotations.append(
-#             dict(
-#                 text=labels[k], # or replace labels with a different list for the text within the circle
-#                 x=pos[k][0], y=2*M-position[k][1],
-#                 xref='x1', yref='y1',
-#                 font=dict(color=font_color, size=font_size),
-#                 showarrow=False)
-#         )
-#     return annotations
-
-# axis = dict(showline=False, # hide axis line, grid, ticklabels and  title
-#             zeroline=False,
-#             showgrid=False,
-#             showticklabels=False,
-#             )
-
-# fig.update_layout(title= 'Tree with Reingold-Tilford Layout',
-#               annotations=make_annotations(position, v_label),
-#               font_size=12,
-#               showlegend=False,
-#               xaxis=axis,
-#               yaxis=axis,
-#               margin=dict(l=40, r=40, b=85, t=100),
-#               hovermode='closest',
-#               plot_bgcolor='rgb(248,248,248)'
-#               )
 
 
 if __name__ == "__main__":
@@ -94,7 +100,7 @@ if __name__ == "__main__":
     client3 = vrp.client(2, 2, 3, 3, 504, 207, 90)
     r.Insert(client3,client1)
     
-    client4 = vrp.client(2, 1.5, 7, 3, 504, 207, 90)
+    client4 = vrp.client(3, 1.5, 7, 3, 504, 207, 90)
     r.Insert(client4,client1)
 
-    showMap(r.edges)
+    showMap(r.edges,title="Test Tree")
