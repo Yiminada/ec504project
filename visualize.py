@@ -17,7 +17,7 @@ def make_annotations(pos, text, font_size=10, font_color='rgb(250,250,250)'):
         )
     return annotations
 
-def showMap(edges,fig=None,printFlag=False,title=""):
+def showMap(edges,fig=None,printFlag=False,title="",edgeColor='gray'):
     if edges is None and fig is not None:
         fig.show()
 
@@ -40,7 +40,7 @@ def showMap(edges,fig=None,printFlag=False,title=""):
     fig.add_trace(go.Scatter(x=Xe,
                     y=Ye,
                     mode='lines',
-                    line=dict(color='rgb(210,210,210)', width=1),
+                    line=dict(color=edgeColor, width=1),
                     hoverinfo='none'
                     ))
     fig.add_trace(go.Scatter(x=Xn,

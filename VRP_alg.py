@@ -16,11 +16,17 @@ def setupData(filename):
         csvFile = csv.reader(file)
         # displaying the contents of the CSV file
         for lines in csvFile:
-            if (lines[0].isdigit()):
+            if (lines[0].isdigit()):  # VRP_Data
                 client_list.append(vrp.client(
                     lines[0], lines[1], lines[2], lines[3], lines[4], lines[5], lines[6]))
-            if (lines[7].isdigit()):
-                vehicle_list.append(vrp.vehicle(lines[7], lines[8]))
+                if (lines[7].isdigit()):
+                    vehicle_list.append(vrp.vehicle(lines[7], lines[8]))
+            elif (lines[1].isdigit()):  # PR_Data
+                client_list.append(vrp.client(
+                    lines[1], lines[2], lines[3], lines[5], lines[6], lines[7], lines[8]))
+                if (lines[9].isdigit()):
+                    vehicle_list.append(vrp.vehicle(lines[9], lines[10]))
+
     return vehicle_list, client_list
 
 
@@ -87,7 +93,7 @@ def Update(r):
 
 
 def main():
-    vehicle_list, client_list = setupData("VRP_Data.csv")
+    vehicle_list, client_list = setupData("PR_Data.csv")
     print("Vehicles: ", end='')
     for v in vehicle_list:
         print(v.id, end=', ')
@@ -96,11 +102,11 @@ def main():
         print(f"({client.xcoords}, {client.ycoords})", end=', ')
     R = insertionHeuristic(client_list, vehicle_list)
     fig = go.Figure()
-    for r in R:
-        fig = showMap(r.edges,fig=fig)
+    colors = ["gray","blue","red","orange","green","purple"]
+    for count,r in enumerate(R):
+        fig = showMap(r.edges, fig=fig,edgeColor=colors[count%len(colors)])
     fig.show()
 
 
 if __name__ == '__main__':
     main()
-
