@@ -17,9 +17,10 @@ def make_annotations(pos, text, font_size=10, font_color='rgb(250,250,250)'):
         )
     return annotations
 
-def showMap(edges,fig=None,printFlag=False,title="",edgeColor='gray'):
+def showMap(edges=None,fig=None,printFlag=False,title="",edgeColor='gray'):
     if edges is None and fig is not None:
         fig.show()
+        return
 
     Xe = []
     Ye = []
