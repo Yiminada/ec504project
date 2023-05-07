@@ -3,13 +3,19 @@
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 from load_distance import getDistances, setupData
+import plotly.graph_objects as go
 from datetime import datetime
+from visualize import showMap
+import setupVRP
+
+filename = "test.csv"
 
 def load_data():
-    vehicle_list, client_list = setupData("VRP_Data.csv")
+    vehicle_list, client_list = setupData(filename)
 
     data = {}
     data['distance_matrix'] = getDistances(client_list)
+    # print(data['distance_matrix'])
     data['demands'] = [client.demand for client in client_list]
     capacities = [vehicle.capacity for vehicle in vehicle_list]
     capacities.sort(reverse=True)
@@ -117,6 +123,7 @@ def print_solution(data, manager, routing, solution):
             index = solution.Value(routing.NextVar(index))
             route_distance += routing.GetArcCostForVehicle(
                 previous_index, index, vehicle_id)
+            # print(route_distance)
         plan_output += ' {0} Load({1})\n'.format(manager.IndexToNode(index),
                                                  route_load)
         plan_output += 'Distance of the route: {}m\n'.format(route_distance)
@@ -127,17 +134,43 @@ def print_solution(data, manager, routing, solution):
     print('Total distance of all routes: {}m'.format(total_distance))
     print('Total load of all routes: {}'.format(total_load))
 
+def ShowData(data, manager, routing, solution):
+    vehicle_list, client_list = setupData(filename)
+    fig = go.Figure()
+    colors = ["gray","blue","red","orange","green","purple"]
+    for vehicle_id in range(data['num_vehicles']):
+        clients_in_route = []
+        index = routing.Start(vehicle_id)
+        while not routing.IsEnd(index):
+            # Add all the clients to a list in order in this route
+            node_index = manager.IndexToNode(index)
+            clients_in_route += [client_list[node_index]]
+            index = solution.Value(routing.NextVar(index))
+
+        # create edges list
+        edges = []
+        for i in range(len(clients_in_route)-1):
+            edges += [(clients_in_route[i],clients_in_route[i+1])]
+        edges += [(clients_in_route[len(clients_in_route)-1],clients_in_route[0])]
+        print(colors[vehicle_id%len(colors)])
+        fig = showMap(edges=edges,fig=fig,edgeColor=colors[vehicle_id%len(colors)])
+    fig.show()
+
+
+
+
 
 def main():
-    start = datetime.now()
     """Solve the CVRP problem."""
     # Instantiate the data problem.
     #data = create_data_model()
     data = load_data()
+    
     if sum(data['vehicle_capacities']) < sum(data['demands']):
         print("There is a greater demand than capacity, can not run code.")
         return
-
+    
+    start = datetime.now()
     # Create the routing index manager.
     manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']),
                                            data['num_vehicles'], data['depot'])
@@ -192,6 +225,7 @@ def main():
     if solution:
         print_solution(data, manager, routing, solution)
     print("Time to run in milliseconds: ", delta.total_seconds()*1000)
+    ShowData(data,manager,routing,solution)
     
 
 
