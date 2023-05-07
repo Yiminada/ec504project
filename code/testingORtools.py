@@ -11,7 +11,7 @@ import csv_randomizer as randCsv
 import csv
 
 
-def load_data(filename="test.csv"):
+def load_data(filename="code/PR_Data.csv"):
     vehicle_list, client_list = setupData(filename)
 
     data = {}
@@ -135,7 +135,7 @@ def print_solution(data, manager, routing, solution):
     print('Total distance of all routes: {}m'.format(total_distance))
     print('Total load of all routes: {}'.format(total_load))
 
-def ShowData(data, manager, routing, solution,filename="test.csv",imagename="ORTools.png"):
+def ShowData(data, manager, routing, solution,filename="code/PR_Data.csv",imagename="ORTools.png"):
     vehicle_list, client_list = setupData(filename)
     fig = go.Figure()
     colors = ["gray","blue","red","orange","green","purple"]
@@ -165,7 +165,7 @@ def main():
     """Solve the CVRP problem."""
     # Instantiate the data problem.
     #data = create_data_model()
-    data = load_data("test.csv")
+    data = load_data("code/PR_Data.csv")
     
     if sum(data['vehicle_capacities']) < sum(data['demands']):
         print("There is a greater demand than capacity, can not run code.")
@@ -235,12 +235,12 @@ def main():
 def testCsv(iters, num_clients, num_vehicles):
     avg_runtime = 0.0
     for i in range(0,iters):
-        randCsv.create_csv("test.csv", num_clients, num_vehicles)
+        randCsv.create_csv("code/PR_Data.csv", num_clients, num_vehicles)
         # -----------------------------------------------------------------------------------------------------
         """Solve the CVRP problem."""
         # Instantiate the data problem.
         #data = create_data_model()
-        data = load_data("test.csv")
+        data = load_data("code/PR_Data.csv")
         
         if sum(data['vehicle_capacities']) < sum(data['demands']):
             print("There is a greater demand than capacity, can not run code.")

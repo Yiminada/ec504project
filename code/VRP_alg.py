@@ -103,7 +103,7 @@ def testCsv(iters, num_clients, num_vehicles):
     return avg_runtime/iters
         
 def main():
-    vehicle_list, client_list = setupData("test.csv")
+    vehicle_list, client_list = setupData("code/PR_Data.csv")
     print("Vehicles: ", end='')
     for v in vehicle_list:
         print(v.id, end=', ')
