@@ -30,7 +30,7 @@ def getDistances(client_list):
         node = []
         for col in range(0, len(client_list)-1 ):
             eqn = ((client_list[row].xcoords - client_list[col].xcoords)**2 + (client_list[row].ycoords - client_list[col].ycoords)**2)**0.5
-            node.append(eqn)
+            node.append(int(eqn))
         dist_mat.append(node)
     return dist_mat
 
