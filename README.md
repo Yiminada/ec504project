@@ -10,7 +10,7 @@ It's very simple. Run the following (for Mac/Linux distros):
 ```
 python -m venv .venv
 source .venv/bin/activate
-pip install plotly
+pip install -r requirements.txt
 ```
 If you're on a Windows machine, activate the virtual environment with `source .venv/Scripts/Activate`.  To deactivate (on any OS) run `deactivate`.
 
