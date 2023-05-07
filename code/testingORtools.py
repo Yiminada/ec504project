@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 from datetime import datetime
 from visualize import showMap
 import setupVRP
+import csv_randomizer as randCsv
 
 filename = "test.csv"
 
@@ -170,7 +171,7 @@ def main():
         print("There is a greater demand than capacity, can not run code.")
         return
     
-    start = datetime.now()
+    
     # Create the routing index manager.
     manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']),
                                            data['num_vehicles'], data['depot'])
@@ -189,6 +190,7 @@ def main():
 
     transit_callback_index = routing.RegisterTransitCallback(distance_callback)
 
+    
     # Define cost of each arc.
     routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
 
@@ -208,7 +210,9 @@ def main():
         data['vehicle_capacities'],  # vehicle maximum capacities
         True,  # start cumul to zero
         'Capacity')
-
+    
+    
+    start = datetime.now()
     # Setting first solution heuristic.
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
     search_parameters.first_solution_strategy = (
@@ -228,6 +232,90 @@ def main():
     ShowData(data,manager,routing,solution)
     
 
+def testCsv(iters, num_clients, num_vehicles):
+    avg_runtime = 0.0
+    for i in range(0,iters):
+        randCsv.create_csv("test.csv", num_clients, num_vehicles)
+        vehicle_list, client_list = setupData("test.csv")
+        
+
+        # -----------------------------------------------------------------------------------------------------
+        """Solve the CVRP problem."""
+        # Instantiate the data problem.
+        #data = create_data_model()
+        data = load_data()
+        
+        if sum(data['vehicle_capacities']) < sum(data['demands']):
+            print("There is a greater demand than capacity, can not run code.")
+            return
+        
+        
+        # Create the routing index manager.
+        manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']),
+                                            data['num_vehicles'], data['depot'])
+
+        # Create Routing Model.
+        routing = pywrapcp.RoutingModel(manager)
+
+
+        # Create and register a transit callback.
+        def distance_callback(from_index, to_index):
+            """Returns the distance between the two nodes."""
+            # Convert from routing variable Index to distance matrix NodeIndex.
+            from_node = manager.IndexToNode(from_index)
+            to_node = manager.IndexToNode(to_index)
+            return data['distance_matrix'][from_node][to_node]
+
+        transit_callback_index = routing.RegisterTransitCallback(distance_callback)
+
+        
+        # Define cost of each arc.
+        routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
+
+
+        # Add Capacity constraint.
+        def demand_callback(from_index):
+            """Returns the demand of the node."""
+            # Convert from routing variable Index to demands NodeIndex.
+            from_node = manager.IndexToNode(from_index)
+            return data['demands'][from_node]
+
+        demand_callback_index = routing.RegisterUnaryTransitCallback(
+            demand_callback)
+        routing.AddDimensionWithVehicleCapacity(
+            demand_callback_index,
+            0,  # null capacity slack
+            data['vehicle_capacities'],  # vehicle maximum capacities
+            True,  # start cumul to zero
+            'Capacity')
+        
+        
+        start = datetime.now()
+        # Setting first solution heuristic.
+        search_parameters = pywrapcp.DefaultRoutingSearchParameters()
+        search_parameters.first_solution_strategy = (
+            routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
+        search_parameters.local_search_metaheuristic = (
+            routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH)
+        search_parameters.time_limit.FromSeconds(1)
+
+        # Solve the problem.
+        solution = routing.SolveWithParameters(search_parameters)
+
+        # -----------------------------------------------------------------------------------------------------
+
+
+        delta = datetime.now()-start
+        avg_runtime += delta.total_seconds() 
+    return avg_runtime/iters
+
 
 if __name__ == '__main__':
-    main()
+    print("\nRunning multiple tests, this could take a while:")
+    print("-----------------------------------------------\n")
+    iters = [5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+    num_nodes = [50, 100, 150, 200, 250, 300, 350, 400, 450, 5000]
+    num_vehicles = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+    for i in range(0, len(iters)):
+        avg_runtime = testCsv(iters[i], num_nodes[i], num_vehicles[i])
+        print("The average runtime is:", avg_runtime, "seconds for iters =", iters[i], ", num nodes =", num_nodes[i], ", and num vehicles =", num_vehicles[i])
