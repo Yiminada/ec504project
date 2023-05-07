@@ -3,7 +3,7 @@ class client:
         self.id = float(id)
         self.xcoords = float(xcoords)
         self.ycoords = float(ycoords)
-        self.demand = float(demand)
+        self.demand = int(float(demand)+0.5)
         self.start_time = float(start_time)
         self.due_date = float(due_date)
         self.service_time = float(service_time)
@@ -16,7 +16,7 @@ class client:
 class vehicle:
     def __init__(self, id, capacity):
         self.id = float(id)
-        self.capacity = float(capacity)
+        self.capacity = int(float(capacity)+0.5)
 
 
 class route:
