@@ -1,6 +1,9 @@
 import setupVRP as vrp
+import csv_randomizer as randCsv
 import csv
 import math
+from datetime import datetime
+
 import plotly.graph_objects as go
 from setupVRP import client, vehicle, route
 from visualize import showMap
@@ -43,14 +46,12 @@ def insertionHeuristic(N, V):
         R.append(route(origin, v))
     N.remove(origin)
     while N:
-        print("in while loop")
         profit_temp = -float('inf')
         invalidRoute = True
         for j in N:
             for r in R:
                 for i_prev, i in r.edges:
                     if feasibility(r.vehicle, r, j) and profit(i_prev, i, j) > profit_temp:
-                        print("in if statement")
                         invalidRoute = False
                         r_candidate = r
                         j_candidate = j
@@ -58,17 +59,16 @@ def insertionHeuristic(N, V):
                         profit_temp = profit(i_prev, i, j)
         if invalidRoute:
             break
-        print(j_candidate.id)
         N.remove(j_candidate)
         r_candidate.Insert(j_candidate, i_candidate)
         # Update(r_candidate)
-    for r in R:
-        # print(f"\nOrigin: ({r.orig.xcoords}, {r.orig.ycoords})")
-        print(f"\nOrigin: {r.orig.id}")
-        print(f"Capacity: {r.demand} vs {r.vehicle.capacity}")
-        for client in r.clientList:
-            # print(f"({client.xcoords}, {client.ycoords})", end=',')
-            print(client.id, end=', ')
+    # for r in R:
+    #     print(f"\nOrigin: ({r.orig.xcoords}, {r.orig.ycoords})")
+    #     print(f"\nOrigin: {r.orig.id}")
+    #     print(f"Capacity: {r.demand} vs {r.vehicle.capacity}")
+    #     for client in r.clientList:
+    #         print(f"({client.xcoords}, {client.ycoords})", end=',')
+    #         print(client.id, end=', ')
     return R
 
 
@@ -91,22 +91,41 @@ def profit(i_prev, i, j):
 def Update(r):
     return None
 
-
+def testCsv(iters, num_clients, num_vehicles):
+    avg_runtime = 0.0
+    for i in range(0,iters):
+        randCsv.create_csv("test.csv", num_clients, num_vehicles)
+        vehicle_list, client_list = setupData("test.csv")
+        start = datetime.now()
+        insertionHeuristic(client_list, vehicle_list)
+        delta = datetime.now()-start
+        avg_runtime += delta.total_seconds() 
+    return avg_runtime/iters
+        
 def main():
-    vehicle_list, client_list = setupData("PR_Data.csv")
-    print("Vehicles: ", end='')
-    for v in vehicle_list:
-        print(v.id, end=', ')
-    print("\nClients: ", end='')
-    for client in client_list:
-        print(f"({client.xcoords}, {client.ycoords})", end=', ')
-    R = insertionHeuristic(client_list, vehicle_list)
-    fig = go.Figure()
-    colors = ["gray","blue","red","orange","green","purple"]
-    for count,r in enumerate(R):
-        fig = showMap(r.edges, fig=fig,edgeColor=colors[count%len(colors)])
-    fig.show()
-
+    # vehicle_list, client_list = setupData("PR_Data.csv")
+    # print("Vehicles: ", end='')
+    # for v in vehicle_list:
+    #     print(v.id, end=', ')
+    # print("\nClients: ", end='')
+    # for client in client_list:
+    #     print(f"({client.xcoords}, {client.ycoords})", end=', ')
+    # R = insertionHeuristic(client_list, vehicle_list)
+    # fig = go.Figure()
+    # colors = ["gray","blue","red","orange","green","purple"]
+    # for count,r in enumerate(R):
+    #     fig = showMap(r.edges, fig=fig,edgeColor=colors[count%len(colors)])
+    # fig.show()
+    
+    
+    print("\nRunning multiple tests, this could take a while:")
+    print("-----------------------------------------------\n\n")
+    iters = [5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+    num_nodes = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
+    num_vehicles = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+    for i in range(0, len(iters) ):
+        avg_runtime = testCsv(iters[i], num_nodes[i], num_vehicles[i])
+        print("The average runtime is:", avg_runtime, "seconds for iters =", iters[i], ", num nodes =", num_nodes[i], ", and num vehicles =", num_vehicles[i])
 
 if __name__ == '__main__':
     main()
