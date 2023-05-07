@@ -8,10 +8,10 @@ from datetime import datetime
 from visualize import showMap
 import setupVRP
 import csv_randomizer as randCsv
+import csv
 
-filename = "test.csv"
 
-def load_data():
+def load_data(filename="test.csv"):
     vehicle_list, client_list = setupData(filename)
 
     data = {}
@@ -135,7 +135,7 @@ def print_solution(data, manager, routing, solution):
     print('Total distance of all routes: {}m'.format(total_distance))
     print('Total load of all routes: {}'.format(total_load))
 
-def ShowData(data, manager, routing, solution):
+def ShowData(data, manager, routing, solution,filename="test.csv",imagename="ORTools.png"):
     vehicle_list, client_list = setupData(filename)
     fig = go.Figure()
     colors = ["gray","blue","red","orange","green","purple"]
@@ -153,9 +153,9 @@ def ShowData(data, manager, routing, solution):
         for i in range(len(clients_in_route)-1):
             edges += [(clients_in_route[i],clients_in_route[i+1])]
         edges += [(clients_in_route[len(clients_in_route)-1],clients_in_route[0])]
-        print(colors[vehicle_id%len(colors)])
+        # print(colors[vehicle_id%len(colors)])
         fig = showMap(edges=edges,fig=fig,edgeColor=colors[vehicle_id%len(colors)])
-    fig.show()
+    fig.write_image(imagename)
 
 
 
@@ -165,7 +165,7 @@ def main():
     """Solve the CVRP problem."""
     # Instantiate the data problem.
     #data = create_data_model()
-    data = load_data()
+    data = load_data("test.csv")
     
     if sum(data['vehicle_capacities']) < sum(data['demands']):
         print("There is a greater demand than capacity, can not run code.")
@@ -228,22 +228,19 @@ def main():
     delta = datetime.now() - start
     if solution:
         print_solution(data, manager, routing, solution)
-    print("Time to run in milliseconds: ", delta.total_seconds()*1000)
-    ShowData(data,manager,routing,solution)
-    
+        print("Time to run in milliseconds: ", delta.total_seconds()*1000)
+        ShowData(data,manager,routing,solution)
+        
 
 def testCsv(iters, num_clients, num_vehicles):
     avg_runtime = 0.0
     for i in range(0,iters):
         randCsv.create_csv("test.csv", num_clients, num_vehicles)
-        vehicle_list, client_list = setupData("test.csv")
-        
-
         # -----------------------------------------------------------------------------------------------------
         """Solve the CVRP problem."""
         # Instantiate the data problem.
         #data = create_data_model()
-        data = load_data()
+        data = load_data("test.csv")
         
         if sum(data['vehicle_capacities']) < sum(data['demands']):
             print("There is a greater demand than capacity, can not run code.")
@@ -311,11 +308,19 @@ def testCsv(iters, num_clients, num_vehicles):
 
 
 if __name__ == '__main__':
-    print("\nRunning multiple tests, this could take a while:")
-    print("-----------------------------------------------\n")
-    iters = [5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
-    num_nodes = [50, 100, 150, 200, 250, 300, 350, 400, 450, 5000]
-    num_vehicles = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
-    for i in range(0, len(iters)):
-        avg_runtime = testCsv(iters[i], num_nodes[i], num_vehicles[i])
-        print("The average runtime is:", avg_runtime, "seconds for iters =", iters[i], ", num nodes =", num_nodes[i], ", and num vehicles =", num_vehicles[i])
+    # print("\nRunning multiple tests, this could take a while:")
+    # print("-----------------------------------------------\n")
+    # iters = [5 for _ in range(20)]
+    # num_nodes = [50*(i+1) for i in range(20)]
+    # num_vehicles = [i+1 for i in range(20)]
+    # f = open("ORtoolsResults.csv",'w',newline='')
+    # with f as file:
+    #     writer = csv.writer(file)
+    #     writer.writerow(["Nodes", "Num_vehicles","Runtime"])
+    #     for i in range(0, len(iters)):
+    #         avg_runtime = testCsv(iters[i], num_nodes[i], num_vehicles[i])
+    #         print("The average runtime is:", avg_runtime, "seconds for iters =", iters[i], ", num nodes =", num_nodes[i], ", and num vehicles =", num_vehicles[i])
+    #         writer.writerow([num_nodes[i], num_vehicles[i], avg_runtime])
+    # f.close()
+    # #print(testCsv(1, 100000, 4))
+    main()

@@ -103,29 +103,37 @@ def testCsv(iters, num_clients, num_vehicles):
     return avg_runtime/iters
         
 def main():
-    # vehicle_list, client_list = setupData("PR_Data.csv")
-    # print("Vehicles: ", end='')
-    # for v in vehicle_list:
-    #     print(v.id, end=', ')
-    # print("\nClients: ", end='')
-    # for client in client_list:
-    #     print(f"({client.xcoords}, {client.ycoords})", end=', ')
-    # R = insertionHeuristic(client_list, vehicle_list)
-    # fig = go.Figure()
-    # colors = ["gray","blue","red","orange","green","purple"]
-    # for count,r in enumerate(R):
-    #     fig = showMap(r.edges, fig=fig,edgeColor=colors[count%len(colors)])
-    # fig.show()
+    vehicle_list, client_list = setupData("test.csv")
+    print("Vehicles: ", end='')
+    for v in vehicle_list:
+        print(v.id, end=', ')
+    print("\nClients: ", end='')
+    for client in client_list:
+        print(f"({client.xcoords}, {client.ycoords})", end=', ')
+    R = insertionHeuristic(client_list, vehicle_list)
+    fig = go.Figure()
+    colors = ["gray","blue","red","orange","green","purple"]
+    for count,r in enumerate(R):
+        fig = showMap(r.edges, fig=fig,edgeColor=colors[count%len(colors)])
+    fig.write_image("InsertionHeuristic.png")
     
     
-    print("\nRunning multiple tests, this could take a while:")
-    print("-----------------------------------------------\n")
-    iters = [5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
-    num_nodes = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
-    num_vehicles = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
-    for i in range(0, len(iters) ):
-        avg_runtime = testCsv(iters[i], num_nodes[i], num_vehicles[i])
-        print("The average runtime is:", avg_runtime, "seconds for iters =", iters[i], ", num nodes =", num_nodes[i], ", and num vehicles =", num_vehicles[i])
+    # print("\nRunning multiple tests, this could take a while:")
+    # print("-----------------------------------------------\n")
+    # iters = [5 for _ in range(50)]
+    # num_nodes = [50*(i+1) for i in range(50)]
+    # num_vehicles = [4 for i in range(50)]
+    # f = open("VRPResults.csv",'w',newline='')
+    # with f as file:
+    #     writer = csv.writer(file)
+    #     writer.writerow(["Nodes", "Num_vehicles","Runtime"])
+    #     for i in range(0, len(iters)):
+    #         avg_runtime = testCsv(iters[i], num_nodes[i], num_vehicles[i])
+    #         print("The average runtime is:", avg_runtime, "seconds for iters =", iters[i], ", num nodes =", num_nodes[i], ", and num vehicles =", num_vehicles[i])
+    #         writer.writerow([num_nodes[i], num_vehicles[i], avg_runtime])
+    # f.close()
+
+
 
 if __name__ == '__main__':
     main()
