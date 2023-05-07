@@ -1,0 +1,4 @@
+#Required pip installs:
+
+ortools==9.6.2534
+plotly==5.14.1
