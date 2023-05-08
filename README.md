@@ -21,5 +21,5 @@ We've configured each algorithm to run and print their output from a single entr
 ### Presentation link
 https://docs.google.com/presentation/d/1zqL0-hHf6ZOdBUKRWEU3CPR2AtTBuGb6sFXqF_0Zv9U/edit?usp=sharing
 
-### Report
+### Report link
 https://docs.google.com/document/d/1yelBcl4w9N3EWt_TEjPo1Go7PxMaTxEcPPINmKHokS0/edit#
