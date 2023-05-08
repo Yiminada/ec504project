@@ -1,10 +1,7 @@
-.venv/Scripts/activate: code/requirements.txt
+.venv/bin/activate: code/requirements.txt
 	python -m venv .venv
-	# .venv/Scripts/python -m pip install --upgrade pip
-	# .venv/Scripts/pip install -r code/requirements.txt
-	ls -lta
-	ls .venv/Scripts
-	source .venv/Scripts/activate
+	.venv/bin/python -m pip install --upgrade pip
+	.venv/bin/pip install -r code/requirements.txt
 
 clean: 
 	rm -rf .venv
