@@ -88,20 +88,18 @@ def profit(i_prev, i, j):
     return -1 * (i_prev_to_j + j_to_i - i_prev_to_i)
 
 
-def Update(r):
-    return None
-
 def testCsv(iters, num_clients, num_vehicles):
     avg_runtime = 0.0
-    for i in range(0,iters):
+    for i in range(0, iters):
         randCsv.create_csv("test.csv", num_clients, num_vehicles)
         vehicle_list, client_list = setupData("test.csv")
         start = datetime.now()
         insertionHeuristic(client_list, vehicle_list)
         delta = datetime.now()-start
-        avg_runtime += delta.total_seconds() 
+        avg_runtime += delta.total_seconds()
     return avg_runtime/iters
-        
+
+
 def main():
     vehicle_list, client_list = setupData("code/PR_Data.csv")
     print("Vehicles: ", end='')
@@ -112,12 +110,11 @@ def main():
         print(f"({client.xcoords}, {client.ycoords})", end=', ')
     R = insertionHeuristic(client_list, vehicle_list)
     fig = go.Figure()
-    colors = ["gray","blue","red","orange","green","purple"]
-    for count,r in enumerate(R):
-        fig = showMap(r.edges, fig=fig,edgeColor=colors[count%len(colors)])
+    colors = ["gray", "blue", "red", "orange", "green", "purple"]
+    for count, r in enumerate(R):
+        fig = showMap(r.edges, fig=fig, edgeColor=colors[count % len(colors)])
     fig.write_image("InsertionHeuristic.png")
-    
-    
+
     # print("\nRunning multiple tests, this could take a while:")
     # print("-----------------------------------------------\n")
     # iters = [5 for _ in range(50)]
@@ -132,7 +129,6 @@ def main():
     #         print("The average runtime is:", avg_runtime, "seconds for iters =", iters[i], ", num nodes =", num_nodes[i], ", and num vehicles =", num_vehicles[i])
     #         writer.writerow([num_nodes[i], num_vehicles[i], avg_runtime])
     # f.close()
-
 
 
 if __name__ == '__main__':
