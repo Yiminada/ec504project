@@ -102,18 +102,18 @@ def testCsv(iters, num_clients, num_vehicles):
 
 def main():
     vehicle_list, client_list = setupData("code/PR_Data.csv")
-    print("Vehicles: ", end='')
-    for v in vehicle_list:
-        print(v.id, end=', ')
-    print("\nClients: ", end='')
-    for client in client_list:
-        print(f"({client.xcoords}, {client.ycoords})", end=', ')
     R = insertionHeuristic(client_list, vehicle_list)
     fig = go.Figure()
     colors = ["gray", "blue", "red", "orange", "green", "purple"]
     for count, r in enumerate(R):
         fig = showMap(r.edges, fig=fig, edgeColor=colors[count % len(colors)])
     fig.write_image("InsertionHeuristic.png")
+
+    tot = 0
+    for r in R:
+        tot += r.getTotDistance()
+    
+    print(f"Total distance for insertion heuristic: {int(tot * 1000)}m")
 
     # print("\nRunning multiple tests, this could take a while:")
     # print("-----------------------------------------------\n")

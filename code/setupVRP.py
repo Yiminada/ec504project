@@ -1,3 +1,5 @@
+import numpy as np
+
 class client:
     def __init__(self, id, xcoords, ycoords, demand, start_time, due_date, service_time):
         self.id = float(id)
@@ -39,7 +41,16 @@ class route:
                 return
                 
         print("Could not insert, goesTo not found")
+    
+    def getTotDistance(self):
+        runtot = 0
+        for edge in self.edges:
+            runtot += findDist(edge[0],edge[1])
+        return runtot
 
+def findDist(c1, c2):
+    """Expects two clients, returns distance between them"""
+    return np.sqrt((c1.xcoords - c2.xcoords)**2 + (c1.ycoords - c2.ycoords)**2)
 
 def testRoute():
     client1 = client(0, 1, 1, 20, 504, 207, 90)
