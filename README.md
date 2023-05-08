@@ -13,7 +13,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r code/requirements.txt
 ```
-If you're on a Windows machine, activate the virtual environment with `source .venv/Scripts/Activate`.  To deactivate (on any OS) run `deactivate`.
+If you're on a Windows machine, activate the virtual environment with `source .venv/Scripts/activate`.  To deactivate (on any OS) run `deactivate`.
 
 ### Running the Code
 We've configured each algorithm to run and print their output from a single entrypoint. To test the insertion heuristic, simply run `python code/VRP_alg.py` from the root directory. To test the benchmark OR tools, run `python code/testingORtools.py`. The visualized output graphs will be available as `.png` files in the root directory.
